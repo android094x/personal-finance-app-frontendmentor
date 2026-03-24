@@ -1,0 +1,19 @@
+node_modules
+dist
+*.local
+.DS_Store
+
+# Logs
+*.log
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.sw?
+
+# Environment variables
+.env
+.env.*
+!.env.example
+!.env.template

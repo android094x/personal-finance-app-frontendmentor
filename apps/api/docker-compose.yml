@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: personal-finance-db
+    environment:
+      POSTGRES_USER: atijera
+      POSTGRES_PASSWORD: atijera@123
+      POSTGRES_DB: finance_app
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
