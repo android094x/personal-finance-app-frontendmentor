@@ -12,16 +12,22 @@ export const createTransaction = async (
   res: Response,
 ) => {
   try {
-    const { name, category, amount, date, recurring, avatar } =
-      req.body as CreateTransaction;
+    const {
+      name,
+      categoryId,
+      amount,
+      date,
+      recurring,
+      avatar = null,
+    } = req.body as CreateTransaction;
     const userId = req.user!.id;
 
     const [createdTx] = await db
       .insert(transactions)
       .values({
         userId,
+        categoryId,
         name,
-        category,
         amount,
         date,
         avatar,
@@ -46,11 +52,18 @@ export const getAllUserTransactions = async (
   try {
     const userId = req.user!.id;
 
-    const userTransactions = await db
-      .select()
-      .from(transactions)
-      .where(eq(transactions.userId, userId))
-      .orderBy(desc(transactions.createdAt));
+    const userTransactions = await db.query.transactions.findMany({
+      where: eq(transactions.userId, userId),
+      with: {
+        category: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: desc(transactions.createdAt),
+    });
 
     res.status(200).json({
       transactions: userTransactions,
@@ -69,10 +82,17 @@ export const getUserTransactionById = async (
     const { id } = req.params as { id: string };
     const userId = req.user!.id;
 
-    const [transaction] = await db
-      .select()
-      .from(transactions)
-      .where(and(eq(transactions.id, id), eq(transactions.userId, userId)));
+    const transaction = await db.query.transactions.findFirst({
+      where: and(eq(transactions.id, id), eq(transactions.userId, userId)),
+      with: {
+        category: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
 
     if (!transaction) {
       res.status(404).json({ error: `Transaction not found ${req.params.id}` });
