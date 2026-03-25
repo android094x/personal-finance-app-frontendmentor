@@ -5,12 +5,14 @@ export const BudgetSchema = z.object({
   category: z.string().min(1),
   maximum: z.string(),
   theme: z.string().min(1),
-  createdAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 
 export const CreateBudgetSchema = BudgetSchema.omit({
   id: true,
   createdAt: true,
+  updatedAt: true,
 });
 
 export const UpdateBudgetSchema = CreateBudgetSchema.partial();

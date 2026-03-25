@@ -23,6 +23,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.29.2",
   "dependencies": {
+    "@epic-web/remember": "^1.1.0",
     "@finance/shared": "workspace:*",
     "cors": "^2.8.6",
     "custom-env": "^2.0.6",

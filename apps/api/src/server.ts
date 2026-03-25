@@ -4,6 +4,8 @@ import morgan from "morgan";
 import helmet from "helmet";
 import { isTest } from "env";
 
+import txsRoutes from "@/routes/txsRoutes";
+
 // Create Express application
 const app = express();
 
@@ -26,8 +28,8 @@ app.get("/health", (req, res) => {
   });
 });
 
-// app.use("/api/auth", authRoutes);
-// app.use("/api/users", userRoutes);
+// app.use("/auth", authRoutes);
+app.use("/api/transactions", txsRoutes);
 // app.use("/api/habits", habitRoutes);
 // app.use("/api/tags", tagRoutes);
 

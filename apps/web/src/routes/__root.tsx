@@ -1,5 +1,7 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { StoreProvider } from "@/lib/StoreProvider";
+import { Provider } from "react-redux";
+
+import { store } from "@/lib/store";
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -7,8 +9,8 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <StoreProvider>
+    <Provider store={store}>
       <Outlet />
-    </StoreProvider>
+    </Provider>
   );
 }

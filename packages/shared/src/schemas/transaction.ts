@@ -2,18 +2,22 @@ import { z } from "zod";
 
 export const TransactionSchema = z.object({
   id: z.uuid(),
+  userId: z.uuid(),
   avatar: z.string().nullable(),
   name: z.string().min(1),
   category: z.string().min(1),
-  date: z.date(),
+  date: z.coerce.date(),
   amount: z.string(),
   recurring: z.boolean(),
-  createdAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 
 export const CreateTransactionSchema = TransactionSchema.omit({
   id: true,
+  userId: true,
   createdAt: true,
+  updatedAt: true,
 });
 
 export const UpdateTransactionSchema = CreateTransactionSchema.partial();

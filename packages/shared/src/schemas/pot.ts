@@ -6,13 +6,15 @@ export const PotSchema = z.object({
   target: z.string(),
   total: z.string(),
   theme: z.string().min(1),
-  createdAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 
 export const CreatePotSchema = PotSchema.omit({
   id: true,
   total: true,
   createdAt: true,
+  updatedAt: true,
 });
 
 export const UpdatePotSchema = CreatePotSchema.partial();
