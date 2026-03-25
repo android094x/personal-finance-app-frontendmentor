@@ -1,11 +1,21 @@
 import type { Response } from "express";
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike } from "drizzle-orm";
 
 import type { CreateTransaction, UpdateTransaction } from "@finance/shared";
 
 import db from "@/db";
 import { transactions } from "@/db/schema";
 import type { AuthenticatedRequest } from "@/middleware/auth";
+import type { PaginationQueryParams } from "@/routes/txsRoutes";
+
+const ORDER_BY = {
+  latest: desc(transactions.date),
+  oldest: asc(transactions.date),
+  "a-z": asc(transactions.name),
+  "z-a": desc(transactions.name),
+  highest: desc(transactions.amount),
+  lowest: asc(transactions.amount),
+} as const;
 
 export const createTransaction = async (
   req: AuthenticatedRequest,
@@ -50,10 +60,31 @@ export const getAllUserTransactions = async (
   res: Response,
 ) => {
   try {
+    const { page, limit, sort, category, search } = res.locals
+      .query as PaginationQueryParams;
+
     const userId = req.user!.id;
 
+    const offset = (page - 1) * limit;
+
+    const conditions = [eq(transactions.userId, userId)];
+    if (search) {
+      conditions.push(ilike(transactions.name, `%${search}%`));
+    }
+
+    if (category) {
+      conditions.push(eq(transactions.categoryId, category));
+    }
+
+    const [{ total }] = await db
+      .select({ total: count() })
+      .from(transactions)
+      .where(and(...conditions));
+
+    const totalPages = Math.ceil(total / limit);
+
     const userTransactions = await db.query.transactions.findMany({
-      where: eq(transactions.userId, userId),
+      where: and(...conditions),
       with: {
         category: {
           columns: {
@@ -62,11 +93,19 @@ export const getAllUserTransactions = async (
           },
         },
       },
-      orderBy: desc(transactions.createdAt),
+      limit,
+      offset,
+      orderBy: ORDER_BY[sort],
     });
 
     res.status(200).json({
       transactions: userTransactions,
+      pagination: {
+        page,
+        limit,
+        totalItems: total,
+        totalPages,
+      },
     });
   } catch (error) {
     console.log(`Get transactions error: ${error}`);
