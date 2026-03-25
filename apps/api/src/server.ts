@@ -4,6 +4,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import { isTest } from "env";
 
+import authRoutes from "@/routes/authRoutes";
 import txsRoutes from "@/routes/txsRoutes";
 
 // Create Express application
@@ -28,10 +29,8 @@ app.get("/health", (req, res) => {
   });
 });
 
-// app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/transactions", txsRoutes);
-// app.use("/api/habits", habitRoutes);
-// app.use("/api/tags", tagRoutes);
 
 // Export the app for use in other modules (like tests)
 export { app };

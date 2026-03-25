@@ -5,7 +5,6 @@ import env from "env";
 export interface JWTPayloadWithUser extends JWTPayload {
   id: string;
   email: string;
-  username: string;
 }
 
 export const generateToken = (payload: JWTPayloadWithUser): Promise<string> => {
@@ -28,6 +27,5 @@ export const verifyToken = async (
   return {
     id: payload.id as string,
     email: payload.email as string,
-    username: payload.username as string,
   };
 };
