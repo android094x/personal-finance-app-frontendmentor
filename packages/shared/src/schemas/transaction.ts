@@ -5,7 +5,7 @@ export const TransactionSchema = z.object({
   userId: z.uuid(),
   avatar: z.string().nullable(),
   name: z.string().min(1),
-  category: z.string().min(1),
+  categoryId: z.uuid(),
   date: z.coerce.date(),
   amount: z.string(),
   recurring: z.boolean(),

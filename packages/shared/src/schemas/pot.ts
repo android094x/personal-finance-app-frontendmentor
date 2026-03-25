@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const PotSchema = z.object({
   id: z.uuid(),
+  userId: z.uuid(),
   name: z.string().min(1),
   target: z.string(),
   total: z.string(),
@@ -12,6 +13,7 @@ export const PotSchema = z.object({
 
 export const CreatePotSchema = PotSchema.omit({
   id: true,
+  userId: true,
   total: true,
   createdAt: true,
   updatedAt: true,
