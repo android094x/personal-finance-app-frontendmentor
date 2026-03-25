@@ -12,7 +12,7 @@ export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   username: varchar("username", { length: 50 }).notNull().unique(),
-  password: varchar("varchar", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 }).notNull(),
   firstName: varchar("first_name", { length: 50 }),
   lastName: varchar("last_name", { length: 50 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -40,7 +40,7 @@ export const budgets = pgTable("budgets", {
   userId: uuid("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  category: text("category").notNull().unique(),
+  category: text("category").notNull(),
   maximum: numeric("maximum", { precision: 10, scale: 2 }).notNull(),
   theme: text("theme").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
