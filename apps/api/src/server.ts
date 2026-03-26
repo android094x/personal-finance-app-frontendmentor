@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { isTest } from "env";
 
 import authRoutes from "@/routes/auth.route";
+import budgetsRoutes from "@/routes/budgets.route";
 import categoriesRoutes from "@/routes/categories.route";
 import txsRoutes from "@/routes/transactions.route";
 
@@ -31,6 +32,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/budgets", budgetsRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/transactions", txsRoutes);
 
