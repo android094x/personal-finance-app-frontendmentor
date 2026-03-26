@@ -7,6 +7,7 @@ import { isTest } from "env";
 import authRoutes from "@/routes/auth.route";
 import budgetsRoutes from "@/routes/budgets.route";
 import categoriesRoutes from "@/routes/categories.route";
+import potsRoutes from "@/routes/pots.route";
 import txsRoutes from "@/routes/transactions.route";
 
 // Create Express application
@@ -34,6 +35,7 @@ app.get("/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/budgets", budgetsRoutes);
 app.use("/api/categories", categoriesRoutes);
+app.use("/api/pots", potsRoutes);
 app.use("/api/transactions", txsRoutes);
 
 // Export the app for use in other modules (like tests)
