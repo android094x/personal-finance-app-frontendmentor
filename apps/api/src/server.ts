@@ -9,6 +9,7 @@ import budgetsRoutes from "@/routes/budgets.route";
 import categoriesRoutes from "@/routes/categories.route";
 import potsRoutes from "@/routes/pots.route";
 import txsRoutes from "@/routes/transactions.route";
+import overviewRoutes from "@/routes/overview.route";
 
 // Create Express application
 const app = express();
@@ -33,6 +34,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/overview", overviewRoutes);
 app.use("/api/budgets", budgetsRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/pots", potsRoutes);
