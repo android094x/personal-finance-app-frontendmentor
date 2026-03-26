@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { isTest } from "env";
 
 import authRoutes from "@/routes/auth.route";
+import categoriesRoutes from "@/routes/categories.route";
 import txsRoutes from "@/routes/transactions.route";
 
 // Create Express application
@@ -30,6 +31,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/categories", categoriesRoutes);
 app.use("/api/transactions", txsRoutes);
 
 // Export the app for use in other modules (like tests)
