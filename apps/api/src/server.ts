@@ -4,8 +4,8 @@ import morgan from "morgan";
 import helmet from "helmet";
 import { isTest } from "env";
 
-import authRoutes from "@/routes/authRoutes";
-import txsRoutes from "@/routes/txsRoutes";
+import authRoutes from "@/routes/auth.route";
+import txsRoutes from "@/routes/transactions.route";
 
 // Create Express application
 const app = express();

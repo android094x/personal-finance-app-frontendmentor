@@ -3,8 +3,8 @@ import type { Response } from "express";
 import type { CreateTransaction, UpdateTransaction } from "@finance/shared";
 
 import type { AuthenticatedRequest } from "@/middleware/auth";
-import type { PaginationQueryParams } from "@/routes/txsRoutes";
-import * as txsService from "@/services/txsService";
+import type { PaginationQueryParams } from "@/routes/transactions.route";
+import * as txsService from "@/services/transactions.service";
 
 export const createTransaction = async (
   req: AuthenticatedRequest,

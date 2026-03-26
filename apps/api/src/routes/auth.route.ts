@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { LoginSchema, RegisterSchema } from "@finance/shared";
 
-import { login, register } from "@/controllers/authController";
+import { login, register } from "@/controllers/auth.controller";
 import { validateBody } from "@/middleware/validation";
 
 const router = Router();

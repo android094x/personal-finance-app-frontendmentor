@@ -12,7 +12,7 @@ import {
   getAllUserTransactions,
   getUserTransactionById,
   updateUserTransaction,
-} from "@/controllers/txsController";
+} from "@/controllers/transactions.controller";
 import { authenticateToken } from "@/middleware/auth";
 import {
   validateBody,
