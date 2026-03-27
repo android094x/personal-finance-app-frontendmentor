@@ -29,11 +29,7 @@ export const create = async (userId: string, data: CreatePot) => {
   return created;
 };
 
-export const update = async (
-  userId: string,
-  id: string,
-  data: UpdatePot,
-) => {
+export const update = async (userId: string, id: string, data: UpdatePot) => {
   const [updated] = await db
     .update(pots)
     .set({ ...data, updatedAt: new Date() })
@@ -52,20 +48,77 @@ export const remove = async (userId: string, id: string) => {
   return deleted ?? null;
 };
 
-// TODO: deposit and withdraw should run inside a db transaction to keep
-// pots.total and pot_transactions in sync. The logic:
-//
-// deposit(userId, potId, amount):
-//   1. Verify pot belongs to user
-//   2. Update pots.total += amount (guard against exceeding target?)
-//   3. Insert pot_transactions record with type "deposit"
-//   4. Return updated pot
-//
-// withdraw(userId, potId, amount):
-//   1. Verify pot belongs to user
-//   2. Verify pot.total >= amount (can't withdraw more than available)
-//   3. Update pots.total -= amount
-//   4. Insert pot_transactions record with type "withdrawal"
-//   5. Return updated pot
-//
-// Use: db.transaction(async (tx) => { ... })
+export const deposit = async (
+  userId: string,
+  potId: string,
+  amount: string,
+) => {
+  return db.transaction(async (tx) => {
+    // 1. Verify pot belongs to user
+    const [pot] = await tx
+      .select()
+      .from(pots)
+      .where(and(eq(pots.id, potId), eq(pots.userId, userId)));
+
+    if (!pot) return null;
+
+    // 2. Update total atomically: total = total + amount
+    const [updated] = await tx
+      .update(pots)
+      .set({
+        total: sql`${pots.total} + ${amount}`,
+        updatedAt: new Date(),
+      })
+      .where(eq(pots.id, potId))
+      .returning();
+
+    // 3. Record the transaction
+    await tx.insert(potTransactions).values({
+      potId,
+      type: "deposit",
+      amount,
+    });
+
+    return updated;
+  });
+};
+
+export const withdraw = async (
+  userId: string,
+  potId: string,
+  amount: string,
+) => {
+  return db.transaction(async (tx) => {
+    // 1. Verify pot belongs to user
+    const [pot] = await tx
+      .select()
+      .from(pots)
+      .where(and(eq(pots.id, potId), eq(pots.userId, userId)));
+
+    if (!pot) return null;
+
+    // 2. Check sufficient funds
+    if (Number(pot.total) < Number(amount)) {
+      throw new Error("INSUFFICIENT_FUNDS");
+    }
+
+    // 3. Update total atomically: total = total - amount
+    const [updated] = await tx
+      .update(pots)
+      .set({
+        total: sql`${pots.total} - ${amount}`,
+        updatedAt: new Date(),
+      })
+      .where(eq(pots.id, potId))
+      .returning();
+
+    // 4. Record the transaction
+    await tx.insert(potTransactions).values({
+      potId,
+      type: "withdraw",
+      amount,
+    });
+
+    return updated;
+  });
+};

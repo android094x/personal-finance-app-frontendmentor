@@ -1,14 +1,20 @@
 import { Router } from "express";
 import { z } from "zod";
 
-import { CreatePotSchema, UpdatePotSchema } from "@finance/shared";
+import {
+  CreatePotSchema,
+  PotTransactionAmountSchema,
+  UpdatePotSchema,
+} from "@finance/shared";
 
 import {
   createPot,
   deletePot,
+  depositToPot,
   getAllPots,
   getPotById,
   updatePot,
+  withdrawFromPot,
 } from "@/controllers/pots.controller";
 import { authenticateToken } from "@/middleware/auth";
 import { validateBody, validateParams } from "@/middleware/validation";
@@ -36,8 +42,18 @@ router.patch(
 
 router.delete("/:id", validateParams(ParamsSchema), deletePot);
 
-// TODO: add deposit/withdraw routes
-// router.post("/:id/deposit", validateParams(ParamsSchema), validateBody(CreatePotTransactionSchema), deposit);
-// router.post("/:id/withdraw", validateParams(ParamsSchema), validateBody(CreatePotTransactionSchema), withdraw);
+router.post(
+  "/:id/deposit",
+  validateParams(ParamsSchema),
+  validateBody(PotTransactionAmountSchema),
+  depositToPot,
+);
+
+router.post(
+  "/:id/withdraw",
+  validateParams(ParamsSchema),
+  validateBody(PotTransactionAmountSchema),
+  withdrawFromPot,
+);
 
 export default router;

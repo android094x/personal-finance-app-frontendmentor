@@ -13,7 +13,7 @@ import {
 
 // TODO Keep in sync with @finance/shared
 
-export const potType = pgEnum("pot_type", ["deposit", "withdrawal"]);
+export const potType = pgEnum("pot_type", ["deposit", "withdraw"]);
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),

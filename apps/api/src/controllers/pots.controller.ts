@@ -104,6 +104,56 @@ export const deletePot = async (
   }
 };
 
-// TODO: add deposit and withdraw controllers
-// POST /:id/deposit   → validateBody(CreatePotTransactionSchema) → deposit
-// POST /:id/withdraw  → validateBody(CreatePotTransactionSchema) → withdraw
+export const depositToPot = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  try {
+    const userId = req.user!.id;
+    const { id } = req.params as { id: string };
+    const { amount } = req.body;
+    const pot = await potsService.deposit(userId, id, amount);
+
+    if (!pot) {
+      res.status(404).json({ error: `Pot not found ${id}` });
+      return;
+    }
+
+    res.json({
+      message: "Deposit successful",
+      pot,
+    });
+  } catch (error) {
+    console.log(`Deposit error: ${error}`);
+    res.status(500).json({ error: "Failed to deposit to pot" });
+  }
+};
+
+export const withdrawFromPot = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  try {
+    const userId = req.user!.id;
+    const { id } = req.params as { id: string };
+    const { amount } = req.body;
+    const pot = await potsService.withdraw(userId, id, amount);
+
+    if (!pot) {
+      res.status(404).json({ error: `Pot not found ${id}` });
+      return;
+    }
+
+    res.json({
+      message: "Withdrawal successful",
+      pot,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "INSUFFICIENT_FUNDS") {
+      res.status(400).json({ error: "Insufficient funds in pot" });
+      return;
+    }
+    console.log(`Withdraw error: ${error}`);
+    res.status(500).json({ error: "Failed to withdraw from pot" });
+  }
+};
