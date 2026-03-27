@@ -1,30 +1,25 @@
 import { and, asc, count, desc, eq, ilike } from "drizzle-orm";
 
-import type { CreateTransaction, UpdateTransaction } from "@finance/shared";
+import type {
+  CreateTransaction,
+  TransactionQuery,
+  TransactionSort,
+  UpdateTransaction,
+} from "@finance/shared";
 
 import db from "@/db";
 import { transactions } from "@/db/schema";
 
-const ORDER_BY = {
+const ORDER_BY: Record<TransactionSort, ReturnType<typeof desc>> = {
   latest: desc(transactions.date),
   oldest: asc(transactions.date),
   "a-z": asc(transactions.name),
   "z-a": desc(transactions.name),
   highest: desc(transactions.amount),
   lowest: asc(transactions.amount),
-} as const;
+};
 
-type SortKey = keyof typeof ORDER_BY;
-
-interface GetAllOptions {
-  page: number;
-  limit: number;
-  sort: SortKey;
-  category?: string;
-  search?: string;
-}
-
-const buildConditions = (userId: string, options: GetAllOptions) => {
+const buildConditions = (userId: string, options: TransactionQuery) => {
   const conditions = [eq(transactions.userId, userId)];
 
   if (options.search) {
@@ -38,7 +33,7 @@ const buildConditions = (userId: string, options: GetAllOptions) => {
   return conditions;
 };
 
-export const getAll = async (userId: string, options: GetAllOptions) => {
+export const getAll = async (userId: string, options: TransactionQuery) => {
   const conditions = buildConditions(userId, options);
   const offset = (options.page - 1) * options.limit;
 

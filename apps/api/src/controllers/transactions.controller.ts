@@ -1,9 +1,12 @@
 import type { Response } from "express";
 
-import type { CreateTransaction, UpdateTransaction } from "@finance/shared";
+import type {
+  CreateTransaction,
+  TransactionQuery,
+  UpdateTransaction,
+} from "@finance/shared";
 
 import type { AuthenticatedRequest } from "@/middleware/auth";
-import type { PaginationQueryParams } from "@/routes/transactions.route";
 import * as txsService from "@/services/transactions.service";
 
 export const createTransaction = async (
@@ -33,7 +36,7 @@ export const getAllUserTransactions = async (
 ) => {
   try {
     const userId = req.user!.id;
-    const query = res.locals.query as PaginationQueryParams;
+    const query = res.locals.query as TransactionQuery;
     const result = await txsService.getAll(userId, query);
 
     res.status(200).json(result);
