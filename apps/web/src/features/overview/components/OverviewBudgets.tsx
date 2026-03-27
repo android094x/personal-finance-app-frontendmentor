@@ -9,7 +9,7 @@ import {
 } from "recharts";
 
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 
 interface Budget {
   spent: number;
@@ -40,17 +40,19 @@ const OverviewBudgets = ({ budgets }: OverviewBudgetsProps) => {
   if (budgets.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-5 rounded-xl bg-white p-8">
+    <div className="flex flex-col gap-5 rounded-xl bg-white p-8 @container">
       <div className="flex items-center justify-between">
-        <h2 className="text-grey-900 text-lg font-bold">Budgets</h2>
+        <h2 className="text-grey-900 text-lg font-bold leading-none">
+          Budgets
+        </h2>
         <Button variant="tertiary" size="text" asChild>
-          <Link to="/budgets">
-            See Details
+          <Link to="/budgets" className="text-box-trim">
+            <span className="leading-none">See Details</span>
             <CaretRightIcon weight="fill" className="size-4" />
           </Link>
         </Button>
       </div>
-      <div className="flex flex-col items-center gap-4 py-8 md:flex-row">
+      <div className="flex flex-col items-center gap-4 py-8 md:flex-row @max-sm:flex-col">
         <div className="flex flex-1 justify-center">
           <div className="relative size-60">
             <ResponsiveContainer width="100%" height="100%">
@@ -81,7 +83,12 @@ const OverviewBudgets = ({ budgets }: OverviewBudgetsProps) => {
         </div>
 
         {/* Budgets */}
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-1">
+        <div
+          className={cn(
+            "grid gap-4 grid-cols-2 md:grid-cols-1 w-full md:w-auto shrink-0",
+            "@max-sm:grid-cols-2 @max-sm:w-full",
+          )}
+        >
           {budgets.map((budget) => (
             <div key={budget.id} className="flex gap-4">
               <span

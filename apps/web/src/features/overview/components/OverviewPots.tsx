@@ -20,7 +20,7 @@ const OverviewPots = ({ pots }: OverviewPotsProps) => {
   }, 0);
 
   return (
-    <div className="flex flex-col gap-5 rounded-xl bg-white p-8">
+    <div className="flex flex-col gap-5 rounded-xl bg-white p-8 lg:@container">
       <div className="flex items-center justify-between">
         <h2 className="text-grey-900 text-lg font-bold">Pots</h2>
         <Button variant="tertiary" size="text" asChild>
@@ -30,7 +30,7 @@ const OverviewPots = ({ pots }: OverviewPotsProps) => {
           </Link>
         </Button>
       </div>
-      <div className="flex gap-5">
+      <div className="flex flex-col md:flex-row gap-5 @max-sm:flex-col">
         <div className="bg-beige-100 flex flex-1 items-center gap-4 rounded-xl px-4 py-5">
           <TipJarIcon weight="fill" className="text-green size-10" />
           <div className="flex flex-col gap-3">
