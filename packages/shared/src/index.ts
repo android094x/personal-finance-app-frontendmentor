@@ -5,3 +5,4 @@ export * from "./schemas/budget";
 export * from "./schemas/pot";
 export * from "./schemas/category";
 export * from "./schemas/potTransaction";
+export * from "./schemas/overview";
