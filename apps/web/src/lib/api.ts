@@ -9,8 +9,20 @@ const getAuthHeaders = (): HeadersInit => {
 };
 
 export const api = {
-  get: async <T>(path: string): Promise<T> => {
-    const res = await fetch(`${API_BASE}${path}`, {
+  get: async <T>(
+    path: string,
+    params?: Record<string, string | number | undefined>,
+  ): Promise<T> => {
+    const url = new URL(`${API_BASE}${path}`);
+    if (params) {
+      for (const [key, value] of Object.entries(params)) {
+        if (value !== undefined) {
+          url.searchParams.set(key, String(value));
+        }
+      }
+    }
+
+    const res = await fetch(url, {
       headers: getAuthHeaders(),
     });
 

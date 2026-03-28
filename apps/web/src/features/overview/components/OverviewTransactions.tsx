@@ -15,11 +15,11 @@ interface Transaction {
   recurring: boolean;
 }
 
-interface OverviewTransactiosnProps {
+interface OverviewTransactionsProps {
   transactions: Transaction[];
 }
 
-const OverviewTransactiosn = ({ transactions }: OverviewTransactiosnProps) => {
+const OverviewTransactions = ({ transactions }: OverviewTransactionsProps) => {
   return (
     <div className="flex flex-col gap-8 rounded-xl bg-white p-8">
       <div className="flex items-center justify-between">
@@ -52,7 +52,7 @@ const TransactionItem = ({
   isLast: boolean;
 }) => {
   return (
-    <React.Fragment key={transaction.id}>
+    <React.Fragment>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {transaction.avatar ? (
@@ -93,4 +93,4 @@ const TransactionItem = ({
   );
 };
 
-export default OverviewTransactiosn;
+export default OverviewTransactions;

@@ -16,6 +16,8 @@ const buttonVariants = cva(
           "text-grey-500 hover:text-grey-900 bg-transparent shadow-none p-0",
         destroy:
           'relative bg-red text-white before:content-[""] before:absolute before:inset-0 hover:before:bg-white/20',
+        pagination:
+          "border border-beige-500 bg-white text-gray-900 hover:text-white hover:bg-beige-500 data-[active=true]:bg-gray-900 data-[active=true]:text-white data-[active=true]:border-gray-900",
       },
       size: {
         default: "p-4 h-auto",
