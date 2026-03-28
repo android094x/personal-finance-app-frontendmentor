@@ -44,11 +44,11 @@ export const Route = createFileRoute("/_dashboard/transactions")({
 });
 
 function TransactionsPage() {
-  const data = Route.useLoaderData();
+  const { transactions, pagination } = Route.useLoaderData();
   // const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
 
-  const { page, totalPages } = data.pagination;
+  const { page, totalPages } = pagination;
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   const goToPage = (newPage: number) => {
@@ -59,8 +59,8 @@ function TransactionsPage() {
     <div className="space-y-6">
       <h1 className="text-grey-900 text-xl font-bold">Transactions</h1>
       <div className="rounded-xl bg-white p-5 md:p-8">
-        <TxsDesktopTable transactions={data.transactions} />
-        <TxsMobileTable transactions={data.transactions} />
+        <TxsDesktopTable transactions={transactions} />
+        <TxsMobileTable transactions={transactions} />
         <Pagination className="mt-8">
           <PaginationContent className="w-full justify-between gap-3">
             <PaginationItem>
