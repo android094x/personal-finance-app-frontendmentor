@@ -43,11 +43,7 @@ export const TxsMobileTable = ({
               })}
             </p>
             <p className="text-grey-500 text-xs">
-              {formatDate(new Date(tx.date), {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
+              {formatDate(new Date(tx.date))}
             </p>
           </div>
         </div>

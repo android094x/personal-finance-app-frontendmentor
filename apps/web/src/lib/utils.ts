@@ -17,7 +17,10 @@ export function formatCurrency(
 }
 
 export function formatDate(date: Date, options?: Intl.DateTimeFormatOptions) {
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
     ...options,
   }).format(date);
 }

@@ -80,11 +80,7 @@ const TransactionItem = ({
             })}
           </p>
           <p className="text-grey-500 text-xs">
-            {formatDate(transaction.date, {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })}
+            {formatDate(transaction.date)}
           </p>
         </div>
       </div>

@@ -3,12 +3,6 @@ import { TxsMobileTable } from "@/features/transactions/components/TxsMobileTabl
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { api } from "@/lib/api";
-
-import {
-  type PaginationResponse,
-  type TransactionQuery,
-  type TransactionWithCategory,
-} from "@finance/shared";
 import {
   Pagination,
   PaginationContent,
@@ -18,6 +12,12 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
+import {
+  type PaginationResponse,
+  type TransactionQuery,
+  type TransactionWithCategory,
+} from "@finance/shared";
+
 const defaultSearch: TransactionQuery = {
   page: 1,
   limit: 10,
@@ -25,7 +25,9 @@ const defaultSearch: TransactionQuery = {
 };
 
 export const Route = createFileRoute("/_dashboard/transactions")({
-  validateSearch: (search: Record<string, unknown>): TransactionQuery => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): Partial<TransactionQuery> => ({
     page: Number(search.page) || defaultSearch.page,
     limit: Number(search.limit) || defaultSearch.limit,
     sort: (search.sort as TransactionQuery["sort"]) ?? defaultSearch.sort,
