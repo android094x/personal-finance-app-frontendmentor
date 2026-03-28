@@ -9,7 +9,10 @@ export const TxsMobileTable = ({
   return (
     <div className="md:hidden w-full">
       {transactions.map((tx) => (
-        <div className="flex items-center justify-between py-4 border-b border-gray-100 last:border-b-0">
+        <div
+          key={tx.id}
+          className="flex items-center justify-between py-4 border-b border-gray-100 last:border-b-0"
+        >
           <div className="flex items-center gap-4">
             {tx.avatar ? (
               <img
