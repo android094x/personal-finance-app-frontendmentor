@@ -1,18 +1,14 @@
 import { TxsDesktopTable } from "@/features/transactions/components/TxsDesktopTable";
 import { TxsMobileTable } from "@/features/transactions/components/TxsMobileTable";
+import { TxsFilters } from "@/features/transactions/components/TxsFilters";
+import { PaginationBar } from "@/components/shared/PaginationBar";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { api } from "@/lib/api";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { Button } from "@/components/ui/button";
 
 import {
+  type Category,
   type PaginationResponse,
   type TransactionQuery,
   type TransactionWithCategory,
@@ -35,21 +31,28 @@ export const Route = createFileRoute("/_dashboard/transactions")({
     search: (search.search as string) || undefined,
   }),
   loaderDeps: ({ search }) => search,
-  loader: ({ deps }) =>
-    api.get<{
-      transactions: TransactionWithCategory[];
-      pagination: PaginationResponse;
-    }>("/transactions", deps),
+  loader: async ({ deps }) => {
+    const [data, categories] = await Promise.all([
+      api.get<{
+        transactions: TransactionWithCategory[];
+        pagination: PaginationResponse;
+      }>("/transactions", deps),
+      api.get<Pick<Category, "id" | "name" | "userId">[]>("/categories"),
+    ]);
+    return { ...data, categories };
+  },
   component: TransactionsPage,
 });
 
 function TransactionsPage() {
-  const { transactions, pagination } = Route.useLoaderData();
-  // const search = Route.useSearch();
+  const { transactions, pagination, categories } = Route.useLoaderData();
+
+  const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
 
-  const { page, totalPages } = pagination;
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const updateSearch = (updates: Partial<TransactionQuery>) => {
+    navigate({ search: (prev) => ({ ...prev, ...updates, page: 1 }) });
+  };
 
   const goToPage = (newPage: number) => {
     navigate({ search: (prev) => ({ ...prev, page: newPage }) });
@@ -57,49 +60,25 @@ function TransactionsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-grey-900 text-xl font-bold">Transactions</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-grey-900 text-xl font-bold">Transactions</h1>
+        <Button>+ Add New Transaction</Button>
+      </div>
       <div className="rounded-xl bg-white p-5 md:p-8">
+        <TxsFilters
+          search={search}
+          categories={categories}
+          onUpdate={updateSearch}
+        />
+
         <TxsDesktopTable transactions={transactions} />
         <TxsMobileTable transactions={transactions} />
-        <Pagination className="mt-8">
-          <PaginationContent className="w-full justify-between gap-3">
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => goToPage(page - 1)}
-                aria-disabled={page <= 1}
-                className={
-                  page <= 1
-                    ? "pointer-events-none opacity-50"
-                    : "cursor-pointer"
-                }
-              />
-            </PaginationItem>
-            <div className="flex gap-2">
-              {pages.map((p) => (
-                <PaginationItem key={p}>
-                  <PaginationLink
-                    isActive={page === p}
-                    onClick={() => goToPage(p)}
-                    className="cursor-pointer"
-                  >
-                    {p}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-            </div>
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => goToPage(page + 1)}
-                aria-disabled={page >= totalPages}
-                className={
-                  page >= totalPages
-                    ? "pointer-events-none opacity-50"
-                    : "cursor-pointer"
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+
+        <PaginationBar
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          onPageChange={goToPage}
+        />
       </div>
     </div>
   );
