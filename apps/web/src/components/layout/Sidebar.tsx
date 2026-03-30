@@ -1,6 +1,7 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth";
 import {
   HouseIcon,
   ArrowsDownUpIcon,
@@ -8,6 +9,7 @@ import {
   TipJarIcon,
   ReceiptIcon,
   ArrowFatLinesLeftIcon,
+  SignOutIcon,
 } from "@phosphor-icons/react";
 import {
   Tooltip,
@@ -27,6 +29,8 @@ export function Sidebar() {
   const pathname = useRouterState({
     select: (s) => s.location.pathname,
   });
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [isMinimized, setIsMinimized] = useState(false);
 
   return (
@@ -92,6 +96,29 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      {/* Logout */}
+      <button
+        onClick={() => {
+          logout();
+          navigate({ to: "/login" });
+        }}
+        className={cn(
+          "cursor-pointer",
+          "text-grey-300 flex h-14 items-center gap-4 font-bold transition-colors hover:text-white",
+          isMinimized ? "justify-center px-6" : "px-8",
+        )}
+      >
+        <SignOutIcon weight="fill" className="size-6 shrink-0" />
+        <span
+          className={cn(
+            "overflow-hidden whitespace-nowrap transition-all duration-200",
+            isMinimized ? "w-0 opacity-0" : "opacity-100 delay-75",
+          )}
+        >
+          Logout
+        </span>
+      </button>
 
       {/* Toggle button */}
       <button

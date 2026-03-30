@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as DesignSystemRouteImport } from './routes/design-system'
 import { Route as DashboardRouteRouteImport } from './routes/_dashboard/route'
 import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
@@ -17,6 +18,11 @@ import { Route as DashboardRecurringBillsRouteImport } from './routes/_dashboard
 import { Route as DashboardPotsRouteImport } from './routes/_dashboard/pots'
 import { Route as DashboardBudgetsRouteImport } from './routes/_dashboard/budgets'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DesignSystemRoute = DesignSystemRouteImport.update({
   id: '/design-system',
   path: '/design-system',
@@ -55,6 +61,7 @@ const DashboardBudgetsRoute = DashboardBudgetsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
   '/design-system': typeof DesignSystemRoute
+  '/login': typeof LoginRoute
   '/budgets': typeof DashboardBudgetsRoute
   '/pots': typeof DashboardPotsRoute
   '/recurring-bills': typeof DashboardRecurringBillsRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/design-system': typeof DesignSystemRoute
+  '/login': typeof LoginRoute
   '/budgets': typeof DashboardBudgetsRoute
   '/pots': typeof DashboardPotsRoute
   '/recurring-bills': typeof DashboardRecurringBillsRoute
@@ -72,6 +80,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_dashboard': typeof DashboardRouteRouteWithChildren
   '/design-system': typeof DesignSystemRoute
+  '/login': typeof LoginRoute
   '/_dashboard/budgets': typeof DashboardBudgetsRoute
   '/_dashboard/pots': typeof DashboardPotsRoute
   '/_dashboard/recurring-bills': typeof DashboardRecurringBillsRoute
@@ -83,6 +92,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/design-system'
+    | '/login'
     | '/budgets'
     | '/pots'
     | '/recurring-bills'
@@ -90,6 +100,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/design-system'
+    | '/login'
     | '/budgets'
     | '/pots'
     | '/recurring-bills'
@@ -99,6 +110,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_dashboard'
     | '/design-system'
+    | '/login'
     | '/_dashboard/budgets'
     | '/_dashboard/pots'
     | '/_dashboard/recurring-bills'
@@ -109,10 +121,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   DesignSystemRoute: typeof DesignSystemRoute
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/design-system': {
       id: '/design-system'
       path: '/design-system'
@@ -188,6 +208,7 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   DesignSystemRoute: DesignSystemRoute,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

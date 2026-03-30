@@ -1,17 +1,25 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
+import { AuthProvider, useAuth } from "@/lib/auth";
 import { getRouter } from "./router";
 import "@/styles/globals.css";
 
 const router = getRouter();
+
+function App() {
+  const auth = useAuth();
+  return <RouterProvider router={router} context={{ auth }} />;
+}
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </StrictMode>,
   );
 }

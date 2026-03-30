@@ -13,6 +13,7 @@
     "@finance/shared": "workspace:*",
     "@phosphor-icons/react": "^2.1.10",
     "@reduxjs/toolkit": "^2.11.2",
+    "@tanstack/react-form": "^1.28.6",
     "@tanstack/react-router": "^1.168.3",
     "@tanstack/react-router-devtools": "^1.166.11",
     "@tanstack/react-table": "^8.21.3",
