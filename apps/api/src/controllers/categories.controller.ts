@@ -13,7 +13,7 @@ export const getAllCategories = async (
     const userId = req.user!.id;
     const categories = await categoriesService.getAll(userId);
 
-    res.json({ categories });
+    res.json(categories);
   } catch (error) {
     console.log(`Get categories error: ${error}`);
     res.status(500).json({ error: "Failed to fetch categories" });
@@ -65,7 +65,9 @@ export const updateCategory = async (
     });
   } catch (error) {
     console.log(`Update category error: ${error}`);
-    res.status(500).json({ error: `Failed to update category ${req.params.id}` });
+    res
+      .status(500)
+      .json({ error: `Failed to update category ${req.params.id}` });
   }
 };
 
@@ -87,6 +89,8 @@ export const deleteCategory = async (
   } catch (error) {
     // TODO: catch Postgres error 23503 (FK violation) and return 409 "Category is in use"
     console.log(`Delete category error: ${error}`);
-    res.status(500).json({ error: `Failed to delete category ${req.params.id}` });
+    res
+      .status(500)
+      .json({ error: `Failed to delete category ${req.params.id}` });
   }
 };
