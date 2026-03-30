@@ -41,7 +41,7 @@ export const TxsDesktopTable = ({
                 ) : (
                   <div className=" flex items-center justify-center size-10 rounded-full bg-gray-900 text-white">
                     {tx.name.split(" ")[0].charAt(0)}
-                    {tx.name.split(" ")[1].charAt(0)}
+                    {tx.name.split(" ")?.[1]?.charAt(0) ?? ""}
                   </div>
                 )}
                 <p className="font-bold">{tx.name}</p>

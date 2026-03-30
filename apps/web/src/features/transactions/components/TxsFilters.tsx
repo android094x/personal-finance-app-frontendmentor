@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { MagnifyingGlassIcon } from "@phosphor-icons/react";
+import {
+  MagnifyingGlassIcon,
+  SortAscendingIcon,
+  FunnelIcon,
+} from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -8,6 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type {
   Category,
   TransactionQuery,
@@ -33,8 +44,9 @@ export function TxsFilters({ search, categories, onUpdate }: TxsFiltersProps) {
   const [searchValue, setSearchValue] = useState(search.search ?? "");
 
   return (
-    <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <div className="relative w-full md:w-[320px]">
+    <div className="mb-6 flex items-center gap-6 justify-between">
+      {/* Search input */}
+      <div className="relative flex-1 md:max-w-[320px]">
         <Input
           placeholder="Search transaction"
           value={searchValue}
@@ -48,7 +60,9 @@ export function TxsFilters({ search, categories, onUpdate }: TxsFiltersProps) {
         />
         <MagnifyingGlassIcon className="text-grey-900 absolute top-1/2 right-5 size-4 -translate-y-1/2" />
       </div>
-      <div className="flex items-center gap-6">
+
+      {/* Desktop: label + select dropdowns */}
+      <div className="hidden items-center gap-6 md:flex">
         <div className="flex items-center gap-2">
           <span className="text-grey-500 text-sm whitespace-nowrap">
             Sort by
@@ -96,6 +110,58 @@ export function TxsFilters({ search, categories, onUpdate }: TxsFiltersProps) {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      {/* Mobile: icon buttons with dropdown menus */}
+      <div className="flex items-center gap-6 md:hidden">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="text-grey-900 cursor-pointer outline-none">
+              <SortAscendingIcon weight="fill" className="size-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuRadioGroup
+              value={search.sort ?? "latest"}
+              onValueChange={(value) =>
+                onUpdate({ sort: value as TransactionSort })
+              }
+            >
+              {Object.entries(SORT_OPTIONS).map(([value, label]) => (
+                <DropdownMenuRadioItem key={value} value={value}>
+                  {label}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="text-grey-900 cursor-pointer outline-none">
+              <FunnelIcon weight="fill" className="size-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuRadioGroup
+              value={search.category ?? "all"}
+              onValueChange={(value) =>
+                onUpdate({
+                  category: value === "all" ? undefined : value,
+                })
+              }
+            >
+              <DropdownMenuRadioItem value="all">
+                All Transactions
+              </DropdownMenuRadioItem>
+              {categories.map((cat) => (
+                <DropdownMenuRadioItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

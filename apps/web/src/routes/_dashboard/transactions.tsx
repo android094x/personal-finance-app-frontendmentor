@@ -1,12 +1,11 @@
 import { TxsDesktopTable } from "@/features/transactions/components/TxsDesktopTable";
 import { TxsMobileTable } from "@/features/transactions/components/TxsMobileTable";
 import { TxsFilters } from "@/features/transactions/components/TxsFilters";
+import { TxsCreateModal } from "@/features/transactions/components/TxsCreateModal";
 import { PaginationBar } from "@/components/shared/PaginationBar";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { api } from "@/lib/api";
-import { Button } from "@/components/ui/button";
-
 import {
   type Category,
   type PaginationResponse,
@@ -62,7 +61,7 @@ function TransactionsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-grey-900 text-xl font-bold">Transactions</h1>
-        <Button>+ Add New Transaction</Button>
+        <TxsCreateModal categories={categories} />
       </div>
       <div className="rounded-xl bg-white p-5 md:p-8">
         <TxsFilters
