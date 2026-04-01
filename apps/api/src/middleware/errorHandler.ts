@@ -12,7 +12,7 @@ export class AppError extends Error {
 
 export const errorHandler = (
   err: Error,
-  req: Request,
+  _: Request,
   res: Response,
   next: NextFunction,
 ) => {

@@ -1,4 +1,5 @@
 import { verifyToken, type JWTPayloadWithUser } from "@/utils/jwt";
+import { AppError } from "@/middleware/errorHandler";
 import type { NextFunction, Request, Response } from "express";
 
 export interface AuthenticatedRequest extends Request {
@@ -10,18 +11,18 @@ export const authenticateToken = async (
   res: Response,
   next: NextFunction,
 ) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader ? authHeader.split(" ")[1] : "";
+
+  if (!token) {
+    throw new AppError(401, "Unauthorized");
+  }
+
   try {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader ? authHeader.split(" ")[1] : "";
-
-    if (!token) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
     const payload = await verifyToken(token);
     req.user = payload;
     next();
-  } catch (error) {
-    res.status(403).json({ error: "Forbidden" });
+  } catch {
+    throw new AppError(403, "Forbidden");
   }
 };

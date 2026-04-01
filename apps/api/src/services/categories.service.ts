@@ -4,6 +4,7 @@ import type { CreateCategory, UpdateCategory } from "@finance/shared";
 
 import db from "@/db";
 import { categories } from "@/db/schema";
+import { AppError } from "@/middleware/errorHandler";
 
 export const getAll = async (userId: string) => {
   return db.query.categories.findMany({
@@ -40,10 +41,17 @@ export const update = async (
 };
 
 export const remove = async (userId: string, id: string) => {
-  const [deleted] = await db
-    .delete(categories)
-    .where(and(eq(categories.id, id), eq(categories.userId, userId)))
-    .returning();
+  try {
+    const [deleted] = await db
+      .delete(categories)
+      .where(and(eq(categories.id, id), eq(categories.userId, userId)))
+      .returning();
 
-  return deleted ?? null;
+    return deleted ?? null;
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "23503") {
+      throw new AppError(409, "Category is in use and cannot be deleted");
+    }
+    throw error;
+  }
 };

@@ -4,6 +4,7 @@ import type { CreatePot, UpdatePot } from "@finance/shared";
 
 import db from "@/db";
 import { pots, potTransactions } from "@/db/schema";
+import { AppError } from "@/middleware/errorHandler";
 
 export const getAll = async (userId: string) => {
   return db.query.pots.findMany({
@@ -99,7 +100,7 @@ export const withdraw = async (
 
     // 2. Check sufficient funds
     if (Number(pot.total) < Number(amount)) {
-      throw new Error("INSUFFICIENT_FUNDS");
+      throw new AppError(400, "Insufficient funds in pot");
     }
 
     // 3. Update total atomically: total = total - amount

@@ -4,156 +4,113 @@ import type { CreatePot, UpdatePot } from "@finance/shared";
 
 import type { AuthenticatedRequest } from "@/middleware/auth";
 import * as potsService from "@/services/pots.service";
+import { AppError } from "@/middleware/errorHandler";
 
 export const getAllPots = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  try {
-    const userId = req.user!.id;
-    const pots = await potsService.getAll(userId);
+  const userId = req.user!.id;
+  const pots = await potsService.getAll(userId);
 
-    res.json({ pots });
-  } catch (error) {
-    console.log(`Get pots error: ${error}`);
-    res.status(500).json({ error: "Failed to fetch pots" });
-  }
+  res.json({ data: pots });
 };
 
 export const getPotById = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  try {
-    const userId = req.user!.id;
-    const { id } = req.params as { id: string };
-    const pot = await potsService.getById(userId, id);
+  const userId = req.user!.id;
+  const { id } = req.params as { id: string };
+  const pot = await potsService.getById(userId, id);
 
-    if (!pot) {
-      res.status(404).json({ error: `Pot not found ${id}` });
-      return;
-    }
-
-    res.json({ pot });
-  } catch (error) {
-    console.log(`Get pot error: ${error}`);
-    res.status(500).json({ error: `Failed to fetch pot ${req.params.id}` });
+  if (!pot) {
+    throw new AppError(404, `Pot not found ${id}`);
   }
+
+  res.json({ data: pot });
 };
 
 export const createPot = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  try {
-    const userId = req.user!.id;
-    const pot = await potsService.create(userId, req.body as CreatePot);
+  const userId = req.user!.id;
+  const pot = await potsService.create(userId, req.body as CreatePot);
 
-    res.status(201).json({
-      message: "Pot created successfully",
-      pot,
-    });
-  } catch (error) {
-    console.log(`Create pot error: ${error}`);
-    res.status(500).json({ error: "Failed to create pot" });
-  }
+  res.status(201).json({
+    data: pot,
+    message: "Pot created successfully",
+  });
 };
 
 export const updatePot = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  try {
-    const userId = req.user!.id;
-    const { id } = req.params as { id: string };
-    const pot = await potsService.update(userId, id, req.body as UpdatePot);
+  const userId = req.user!.id;
+  const { id } = req.params as { id: string };
+  const pot = await potsService.update(userId, id, req.body as UpdatePot);
 
-    if (!pot) {
-      res.status(404).json({ error: `Pot not found ${id}` });
-      return;
-    }
-
-    res.json({
-      message: "Pot updated successfully",
-      pot,
-    });
-  } catch (error) {
-    console.log(`Update pot error: ${error}`);
-    res.status(500).json({ error: `Failed to update pot ${req.params.id}` });
+  if (!pot) {
+    throw new AppError(404, `Pot not found ${id}`);
   }
+
+  res.json({
+    data: pot,
+    message: "Pot updated successfully",
+  });
 };
 
 export const deletePot = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  try {
-    const userId = req.user!.id;
-    const { id } = req.params as { id: string };
-    const pot = await potsService.remove(userId, id);
+  const userId = req.user!.id;
+  const { id } = req.params as { id: string };
+  const pot = await potsService.remove(userId, id);
 
-    if (!pot) {
-      res.status(404).json({ error: `Pot not found ${id}` });
-      return;
-    }
-
-    res.json({ message: "Pot deleted successfully" });
-  } catch (error) {
-    console.log(`Delete pot error: ${error}`);
-    res.status(500).json({ error: `Failed to delete pot ${req.params.id}` });
+  if (!pot) {
+    throw new AppError(404, `Pot not found ${id}`);
   }
+
+  res.json({ data: null, message: "Pot deleted successfully" });
 };
 
 export const depositToPot = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  try {
-    const userId = req.user!.id;
-    const { id } = req.params as { id: string };
-    const { amount } = req.body;
-    const pot = await potsService.deposit(userId, id, amount);
+  const userId = req.user!.id;
+  const { id } = req.params as { id: string };
+  const { amount } = req.body;
+  const pot = await potsService.deposit(userId, id, amount);
 
-    if (!pot) {
-      res.status(404).json({ error: `Pot not found ${id}` });
-      return;
-    }
-
-    res.json({
-      message: "Deposit successful",
-      pot,
-    });
-  } catch (error) {
-    console.log(`Deposit error: ${error}`);
-    res.status(500).json({ error: "Failed to deposit to pot" });
+  if (!pot) {
+    throw new AppError(404, `Pot not found ${id}`);
   }
+
+  res.json({
+    data: pot,
+    message: "Deposit successful",
+  });
 };
 
 export const withdrawFromPot = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  try {
-    const userId = req.user!.id;
-    const { id } = req.params as { id: string };
-    const { amount } = req.body;
-    const pot = await potsService.withdraw(userId, id, amount);
+  const userId = req.user!.id;
+  const { id } = req.params as { id: string };
+  const { amount } = req.body;
+  const pot = await potsService.withdraw(userId, id, amount);
 
-    if (!pot) {
-      res.status(404).json({ error: `Pot not found ${id}` });
-      return;
-    }
-
-    res.json({
-      message: "Withdrawal successful",
-      pot,
-    });
-  } catch (error) {
-    if (error instanceof Error && error.message === "INSUFFICIENT_FUNDS") {
-      res.status(400).json({ error: "Insufficient funds in pot" });
-      return;
-    }
-    console.log(`Withdraw error: ${error}`);
-    res.status(500).json({ error: "Failed to withdraw from pot" });
+  if (!pot) {
+    throw new AppError(404, `Pot not found ${id}`);
   }
+
+  res.json({
+    data: pot,
+    message: "Withdrawal successful",
+  });
 };
