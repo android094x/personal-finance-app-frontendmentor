@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_dashboard")({
 function DashboardLayout() {
   return (
     <TooltipProvider>
-      <div className="bg-beige-100 relative flex h-screen">
+      <div className="bg-beige-100 relative flex h-dvh">
         <Sidebar />
         <BottomBar />
         <main className="flex-1 overflow-y-auto">

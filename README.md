@@ -2,7 +2,9 @@
 
 > A full-stack personal finance application built as a [Frontend Mentor](https://www.frontendmentor.io/challenges/personal-finance-app-JfjtZgyMt1) Guru-level challenge.
 
-![Design preview for the Personal finance app coding challenge](./![app preview image](preview.png).jpg)
+![Design preview for the Personal finance app coding challenge](./preview.jpg)
+
+**[Live Demo](https://web-production-02ea9.up.railway.app/)** | Demo credentials: `demo@finance.com` / `demo1234`
 
 ## Status
 
