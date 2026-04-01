@@ -2,7 +2,7 @@
 
 > A full-stack personal finance application built as a [Frontend Mentor](https://www.frontendmentor.io/challenges/personal-finance-app-JfjtZgyMt1) Guru-level challenge.
 
-![Design preview for the Personal finance app coding challenge](./preview.jpg)
+![Design preview for the Personal finance app coding challenge](./![app preview image](preview.png).jpg)
 
 ## Status
 
