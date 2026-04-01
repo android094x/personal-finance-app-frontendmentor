@@ -26,6 +26,8 @@
 - [ ] Pot progress UI
 - [ ] Loading and error states
 - [ ] Keyboard navigation improvements
+- [ ] API integration tests
+- [ ] Frontend component tests
 
 ## Tech Stack
 
