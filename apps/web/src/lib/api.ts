@@ -1,6 +1,8 @@
 import type { PaginationResponse } from "@finance/shared";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+const API_BASE = `${BASE_URL}/api`;
 
 const getAuthHeaders = (): HeadersInit => {
   const token = localStorage.getItem("token");
