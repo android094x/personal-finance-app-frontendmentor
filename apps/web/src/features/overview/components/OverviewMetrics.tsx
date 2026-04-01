@@ -1,5 +1,4 @@
 import { cn, formatCurrency } from "@/lib/utils";
-import React from "react";
 
 interface OverviewMetricsProps {
   balance: {

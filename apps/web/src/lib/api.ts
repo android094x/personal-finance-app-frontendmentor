@@ -1,3 +1,5 @@
+import type { PaginationResponse } from "@finance/shared";
+
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 const getAuthHeaders = (): HeadersInit => {
@@ -8,11 +10,35 @@ const getAuthHeaders = (): HeadersInit => {
   };
 };
 
+export interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  meta?: { pagination?: PaginationResponse };
+}
+
+const request = async <T>(
+  url: string | URL,
+  options?: RequestInit,
+): Promise<ApiResponse<T>> => {
+  const res = await fetch(url, {
+    ...options,
+    headers: { ...getAuthHeaders(), ...options?.headers },
+  });
+
+  console.log("API response:", res);
+
+  if (!res.ok) {
+    throw new Error(`API error: ${res.status}`);
+  }
+
+  return res.json();
+};
+
 export const api = {
   get: async <T>(
     path: string,
     params?: Record<string, string | number | undefined>,
-  ): Promise<T> => {
+  ): Promise<ApiResponse<T>> => {
     const url = new URL(`${API_BASE}${path}`);
     if (params) {
       for (const [key, value] of Object.entries(params)) {
@@ -22,28 +48,13 @@ export const api = {
       }
     }
 
-    const res = await fetch(url, {
-      headers: getAuthHeaders(),
-    });
-
-    if (!res.ok) {
-      throw new Error(`API error: ${res.status}`);
-    }
-
-    return res.json();
+    return request<T>(url);
   },
 
-  post: async <T>(path: string, body: unknown): Promise<T> => {
-    const res = await fetch(`${API_BASE}${path}`, {
+  post: async <T>(path: string, body: unknown): Promise<ApiResponse<T>> => {
+    return request<T>(`${API_BASE}${path}`, {
       method: "POST",
-      headers: getAuthHeaders(),
       body: JSON.stringify(body),
     });
-
-    if (!res.ok) {
-      throw new Error(`API error: ${res.status}`);
-    }
-
-    return res.json();
   },
 };

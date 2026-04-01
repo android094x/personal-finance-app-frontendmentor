@@ -9,7 +9,12 @@ import OverviewRecurringBills from "@/features/overview/components/OverviewRecur
 import OverviewTransactions from "@/features/overview/components/OverviewTransactions";
 
 export const Route = createFileRoute("/_dashboard/")({
-  loader: () => api.get<OverviewResponse>("/overview"),
+  loader: async () => {
+    const { data } = await api.get<OverviewResponse>("/overview");
+    console.log("Overview data:", data);
+    return data;
+  },
+  errorComponent: ({ error }) => <div>{error.message}</div>,
   component: OverviewPage,
 });
 

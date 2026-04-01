@@ -8,7 +8,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { api } from "@/lib/api";
 import {
   type Category,
-  type PaginationResponse,
   type TransactionQuery,
   type TransactionWithCategory,
 } from "@finance/shared";
@@ -31,14 +30,15 @@ export const Route = createFileRoute("/_dashboard/transactions")({
   }),
   loaderDeps: ({ search }) => search,
   loader: async ({ deps }) => {
-    const [data, categories] = await Promise.all([
-      api.get<{
-        transactions: TransactionWithCategory[];
-        pagination: PaginationResponse;
-      }>("/transactions", deps),
+    const [txsResponse, categoriesResponse] = await Promise.all([
+      api.get<TransactionWithCategory[]>("/transactions", deps),
       api.get<Pick<Category, "id" | "name" | "userId">[]>("/categories"),
     ]);
-    return { ...data, categories };
+    return {
+      transactions: txsResponse.data,
+      pagination: txsResponse.meta!.pagination!,
+      categories: categoriesResponse.data,
+    };
   },
   component: TransactionsPage,
 });

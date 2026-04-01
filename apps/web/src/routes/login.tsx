@@ -38,7 +38,7 @@ function LoginPage() {
       onSubmit: LoginSchema,
     },
     onSubmit: async ({ value }) => {
-      const data = await api.post<{ token: string }>("/auth/login", value);
+      const { data } = await api.post<{ token: string }>("/auth/login", value);
       login(data.token);
       navigate({ to: "/" });
     },
