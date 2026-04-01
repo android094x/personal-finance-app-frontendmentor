@@ -10,6 +10,7 @@ import categoriesRoutes from "@/routes/categories.route";
 import potsRoutes from "@/routes/pots.route";
 import txsRoutes from "@/routes/transactions.route";
 import overviewRoutes from "@/routes/overview.route";
+import { errorHandler, notFound } from "@/middleware/errorHandler";
 
 // Create Express application
 const app = express();
@@ -39,6 +40,10 @@ app.use("/api/budgets", budgetsRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/pots", potsRoutes);
 app.use("/api/transactions", txsRoutes);
+
+app.use(notFound);
+
+app.use(errorHandler);
 
 // Export the app for use in other modules (like tests)
 export { app };
