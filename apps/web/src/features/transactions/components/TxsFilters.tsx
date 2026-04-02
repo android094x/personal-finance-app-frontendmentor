@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MagnifyingGlassIcon,
   SortAscendingIcon,
   FunnelIcon,
 } from "@phosphor-icons/react";
+import { useDebounce } from "@/hooks/useDebounce";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -42,6 +43,14 @@ interface TxsFiltersProps {
 
 export function TxsFilters({ search, categories, onUpdate }: TxsFiltersProps) {
   const [searchValue, setSearchValue] = useState(search.search ?? "");
+  const debouncedSearch = useDebounce(searchValue);
+
+  useEffect(() => {
+    const normalizedValue = debouncedSearch || undefined;
+    if (normalizedValue !== search.search) {
+      onUpdate({ search: normalizedValue });
+    }
+  }, [debouncedSearch]);
 
   return (
     <div className="mb-6 flex items-center gap-6 justify-between">
@@ -51,12 +60,6 @@ export function TxsFilters({ search, categories, onUpdate }: TxsFiltersProps) {
           placeholder="Search transaction"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              onUpdate({ search: searchValue || undefined });
-            }
-          }}
-          onBlur={() => onUpdate({ search: searchValue || undefined })}
         />
         <MagnifyingGlassIcon className="text-grey-900 absolute top-1/2 right-5 size-4 -translate-y-1/2" />
       </div>
