@@ -13,8 +13,7 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  const result = await authService.loginUser(email, password);
+  const result = await authService.loginUser(req.body);
 
   if (!result) {
     throw new AppError(401, "Invalid credentials");

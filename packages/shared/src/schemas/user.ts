@@ -4,8 +4,7 @@ export const UserSchema = z.object({
   id: z.uuid(),
   email: z.email().max(255),
   password: z.string().min(8).max(255),
-  firstName: z.string().max(50).nullable(),
-  lastName: z.string().max(50).nullable(),
+  name: z.string().max(100),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -13,8 +12,7 @@ export const UserSchema = z.object({
 export const RegisterSchema = UserSchema.pick({
   email: true,
   password: true,
-  firstName: true,
-  lastName: true,
+  name: true,
 });
 
 export const LoginSchema = UserSchema.pick({

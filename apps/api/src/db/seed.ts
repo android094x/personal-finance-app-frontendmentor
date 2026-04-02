@@ -32,8 +32,7 @@ async function seed() {
       .values({
         email: "demo@finance.com",
         password: hashedPassword,
-        firstName: "Demo",
-        lastName: "User",
+        name: "Demo User",
       })
       .returning();
 

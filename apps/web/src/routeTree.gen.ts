@@ -9,20 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as DesignSystemRouteImport } from './routes/design-system'
 import { Route as DashboardRouteRouteImport } from './routes/_dashboard/route'
+import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
 import { Route as DashboardTransactionsRouteImport } from './routes/_dashboard/transactions'
 import { Route as DashboardRecurringBillsRouteImport } from './routes/_dashboard/recurring-bills'
 import { Route as DashboardPotsRouteImport } from './routes/_dashboard/pots'
 import { Route as DashboardBudgetsRouteImport } from './routes/_dashboard/budgets'
+import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
+import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DesignSystemRoute = DesignSystemRouteImport.update({
   id: '/design-system',
   path: '/design-system',
@@ -30,6 +27,10 @@ const DesignSystemRoute = DesignSystemRouteImport.update({
 } as any)
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/_dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRouteRoute = AuthRouteRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
@@ -57,30 +58,44 @@ const DashboardBudgetsRoute = DashboardBudgetsRouteImport.update({
   path: '/budgets',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
   '/design-system': typeof DesignSystemRoute
-  '/login': typeof LoginRoute
+  '/login': typeof AuthLoginRoute
+  '/signup': typeof AuthSignupRoute
   '/budgets': typeof DashboardBudgetsRoute
   '/pots': typeof DashboardPotsRoute
   '/recurring-bills': typeof DashboardRecurringBillsRoute
   '/transactions': typeof DashboardTransactionsRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof DashboardIndexRoute
   '/design-system': typeof DesignSystemRoute
-  '/login': typeof LoginRoute
+  '/login': typeof AuthLoginRoute
+  '/signup': typeof AuthSignupRoute
   '/budgets': typeof DashboardBudgetsRoute
   '/pots': typeof DashboardPotsRoute
   '/recurring-bills': typeof DashboardRecurringBillsRoute
   '/transactions': typeof DashboardTransactionsRoute
-  '/': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_auth': typeof AuthRouteRouteWithChildren
   '/_dashboard': typeof DashboardRouteRouteWithChildren
   '/design-system': typeof DesignSystemRoute
-  '/login': typeof LoginRoute
+  '/_auth/login': typeof AuthLoginRoute
+  '/_auth/signup': typeof AuthSignupRoute
   '/_dashboard/budgets': typeof DashboardBudgetsRoute
   '/_dashboard/pots': typeof DashboardPotsRoute
   '/_dashboard/recurring-bills': typeof DashboardRecurringBillsRoute
@@ -93,24 +108,28 @@ export interface FileRouteTypes {
     | '/'
     | '/design-system'
     | '/login'
+    | '/signup'
     | '/budgets'
     | '/pots'
     | '/recurring-bills'
     | '/transactions'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/design-system'
     | '/login'
+    | '/signup'
     | '/budgets'
     | '/pots'
     | '/recurring-bills'
     | '/transactions'
-    | '/'
   id:
     | '__root__'
+    | '/_auth'
     | '/_dashboard'
     | '/design-system'
-    | '/login'
+    | '/_auth/login'
+    | '/_auth/signup'
     | '/_dashboard/budgets'
     | '/_dashboard/pots'
     | '/_dashboard/recurring-bills'
@@ -119,20 +138,13 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   DesignSystemRoute: typeof DesignSystemRoute
-  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/design-system': {
       id: '/design-system'
       path: '/design-system'
@@ -145,6 +157,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof DashboardRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_dashboard/': {
@@ -182,8 +201,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardBudgetsRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_auth/signup': {
+      id: '/_auth/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
   }
 }
+
+interface AuthRouteRouteChildren {
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthSignupRoute: typeof AuthSignupRoute
+}
+
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthLoginRoute: AuthLoginRoute,
+  AuthSignupRoute: AuthSignupRoute,
+}
+
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
 
 interface DashboardRouteRouteChildren {
   DashboardBudgetsRoute: typeof DashboardBudgetsRoute
@@ -206,9 +253,9 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  AuthRouteRoute: AuthRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   DesignSystemRoute: DesignSystemRoute,
-  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
