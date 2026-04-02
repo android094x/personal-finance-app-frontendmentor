@@ -15,6 +15,10 @@
     "db:seed": "pnpm --filter api db:seed",
     "db:studio": "pnpm --filter api db:studio",
     "db:up": "docker compose -f apps/api/docker-compose.yml up -d",
-    "db:down": "docker compose -f apps/api/docker-compose.yml down"
+    "db:down": "docker compose -f apps/api/docker-compose.yml down",
+    "start:web": "serve -s apps/web/dist -l ${PORT:-5173}"
+  },
+  "dependencies": {
+    "serve": "^14.2.6"
   }
 }
