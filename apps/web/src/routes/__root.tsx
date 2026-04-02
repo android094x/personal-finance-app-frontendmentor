@@ -1,12 +1,12 @@
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { Provider } from "react-redux";
+import { type QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import type { useAuth } from "@/lib/auth";
-import { store } from "@/lib/store";
 
 export interface RouterContext {
   auth: ReturnType<typeof useAuth> | undefined;
+  queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
@@ -14,10 +14,12 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootComponent() {
+  const { queryClient } = Route.useRouteContext();
+
   return (
-    <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
       <Outlet />
       <TanStackRouterDevtools />
-    </Provider>
+    </QueryClientProvider>
   );
 }
