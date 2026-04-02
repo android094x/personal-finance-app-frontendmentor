@@ -57,4 +57,17 @@ export const api = {
       body: JSON.stringify(body),
     });
   },
+
+  patch: async <T>(path: string, body: unknown): Promise<ApiResponse<T>> => {
+    return request<T>(`${API_BASE}${path}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    });
+  },
+
+  delete: async <T>(path: string): Promise<ApiResponse<T>> => {
+    return request<T>(`${API_BASE}${path}`, {
+      method: "DELETE",
+    });
+  },
 };

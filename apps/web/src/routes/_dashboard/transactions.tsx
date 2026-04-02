@@ -1,9 +1,12 @@
-import { TxsDesktopTable } from "@/features/transactions/components/TxsDesktopTable";
-import { TxsMobileTable } from "@/features/transactions/components/TxsMobileTable";
+import { useMemo, useState } from "react";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+
+import { getColumns } from "@/features/transactions/components/columns";
+import { TxsDataTable } from "@/features/transactions/components/TxsDataTable";
 import { TxsFilters } from "@/features/transactions/components/TxsFilters";
-import { TxsCreateModal } from "@/features/transactions/components/TxsCreateModal";
+import { TxsFormDialog } from "@/features/transactions/components/TxsFormDialog";
 import { PaginationBar } from "@/components/shared/PaginationBar";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ConfirmDeleteDialog } from "@/components/shared/ConfirmDeleteDialog";
 
 import { api } from "@/lib/api";
 import {
@@ -45,6 +48,7 @@ export const Route = createFileRoute("/_dashboard/transactions")({
 
 function TransactionsPage() {
   const { transactions, pagination, categories } = Route.useLoaderData();
+  const router = useRouter();
 
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
@@ -57,11 +61,32 @@ function TransactionsPage() {
     navigate({ search: (prev) => ({ ...prev, page: newPage }) });
   };
 
+  const [editTarget, setEditTarget] = useState<TransactionWithCategory | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<TransactionWithCategory | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      await api.delete(`/transactions/${deleteTarget.id}`);
+      setDeleteTarget(null);
+      router.invalidate();
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const columns = useMemo(
+    () => getColumns({ onEdit: setEditTarget, onDelete: setDeleteTarget }),
+    [],
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-grey-900 text-xl font-bold">Transactions</h1>
-        <TxsCreateModal categories={categories} />
+        <TxsFormDialog categories={categories} />
       </div>
       <div className="rounded-xl bg-white p-5 md:p-8">
         <TxsFilters
@@ -70,8 +95,7 @@ function TransactionsPage() {
           onUpdate={updateSearch}
         />
 
-        <TxsDesktopTable transactions={transactions} />
-        <TxsMobileTable transactions={transactions} />
+        <TxsDataTable columns={columns} data={transactions} />
 
         <PaginationBar
           page={pagination.page}
@@ -79,6 +103,22 @@ function TransactionsPage() {
           onPageChange={goToPage}
         />
       </div>
+
+      <TxsFormDialog
+        categories={categories}
+        transaction={editTarget ?? undefined}
+        open={!!editTarget}
+        onOpenChange={(open) => !open && setEditTarget(null)}
+      />
+
+      <ConfirmDeleteDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={handleDeleteConfirm}
+        title={`Delete '${deleteTarget?.name}'?`}
+        description="Are you sure you want to delete this transaction? This action cannot be reversed, and all the data inside it will be removed forever."
+        isPending={isDeleting}
+      />
     </div>
   );
 }
