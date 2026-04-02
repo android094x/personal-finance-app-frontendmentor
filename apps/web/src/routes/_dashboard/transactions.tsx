@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getColumns } from "@/features/transactions/components/columns";
 import { TxsDataTable } from "@/features/transactions/components/TxsDataTable";
@@ -8,11 +9,14 @@ import { TxsFormDialog } from "@/features/transactions/components/TxsFormDialog"
 import { PaginationBar } from "@/components/shared/PaginationBar";
 import { ConfirmDeleteDialog } from "@/components/shared/ConfirmDeleteDialog";
 
-import { api } from "@/lib/api";
 import {
-  type Category,
-  type TransactionQuery,
-  type TransactionWithCategory,
+  transactionsQueryOptions,
+  categoriesQueryOptions,
+} from "@/features/transactions/queries";
+import { api } from "@/lib/api";
+import type {
+  TransactionQuery,
+  TransactionWithCategory,
 } from "@finance/shared";
 
 const defaultSearch: TransactionQuery = {
@@ -32,26 +36,24 @@ export const Route = createFileRoute("/_dashboard/transactions")({
     search: (search.search as string) || undefined,
   }),
   loaderDeps: ({ search }) => search,
-  loader: async ({ deps }) => {
-    const [txsResponse, categoriesResponse] = await Promise.all([
-      api.get<TransactionWithCategory[]>("/transactions", deps),
-      api.get<Pick<Category, "id" | "name" | "userId">[]>("/categories"),
+  loader: async ({ deps, context: { queryClient } }) => {
+    await Promise.all([
+      queryClient.ensureQueryData(transactionsQueryOptions(deps)),
+      queryClient.ensureQueryData(categoriesQueryOptions),
     ]);
-    return {
-      transactions: txsResponse.data,
-      pagination: txsResponse.meta!.pagination!,
-      categories: categoriesResponse.data,
-    };
   },
   component: TransactionsPage,
 });
 
 function TransactionsPage() {
-  const { transactions, pagination, categories } = Route.useLoaderData();
-  const router = useRouter();
-
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
+  const queryClient = useQueryClient();
+
+  const { data: txsData } = useSuspenseQuery(transactionsQueryOptions(search));
+  const { data: categories } = useSuspenseQuery(categoriesQueryOptions);
+
+  const { transactions, pagination } = txsData;
 
   const updateSearch = (updates: Partial<TransactionQuery>) => {
     navigate({ search: (prev) => ({ ...prev, ...updates, page: 1 }) });
@@ -61,8 +63,11 @@ function TransactionsPage() {
     navigate({ search: (prev) => ({ ...prev, page: newPage }) });
   };
 
-  const [editTarget, setEditTarget] = useState<TransactionWithCategory | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<TransactionWithCategory | null>(null);
+  const [editTarget, setEditTarget] = useState<TransactionWithCategory | null>(
+    null,
+  );
+  const [deleteTarget, setDeleteTarget] =
+    useState<TransactionWithCategory | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteConfirm = async () => {
@@ -71,7 +76,7 @@ function TransactionsPage() {
     try {
       await api.delete(`/transactions/${deleteTarget.id}`);
       setDeleteTarget(null);
-      router.invalidate();
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     } finally {
       setIsDeleting(false);
     }

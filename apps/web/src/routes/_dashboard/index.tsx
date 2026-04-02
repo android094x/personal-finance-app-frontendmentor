@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { type OverviewResponse } from "@finance/shared";
-import { api } from "@/lib/api";
+import { overviewQueryOptions } from "@/features/overview/queries";
 import OverviewMetrics from "@/features/overview/components/OverviewMetrics";
 import OverviewPots from "@/features/overview/components/OverviewPots";
 import OverviewBudgets from "@/features/overview/components/OverviewBudgets";
@@ -9,16 +9,15 @@ import OverviewRecurringBills from "@/features/overview/components/OverviewRecur
 import OverviewTransactions from "@/features/overview/components/OverviewTransactions";
 
 export const Route = createFileRoute("/_dashboard/")({
-  loader: async () => {
-    const { data } = await api.get<OverviewResponse>("/overview");
-    return data;
+  loader: async ({ context: { queryClient } }) => {
+    await queryClient.ensureQueryData(overviewQueryOptions);
   },
   errorComponent: ({ error }) => <div>{error.message}</div>,
   component: OverviewPage,
 });
 
 function OverviewPage() {
-  const data = Route.useLoaderData();
+  const { data } = useSuspenseQuery(overviewQueryOptions);
 
   const balance = {
     current: Number(data.balance.current),

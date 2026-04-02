@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   Dialog,
@@ -43,7 +43,7 @@ export function TxsFormDialog({
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
 }: TxsFormDialogProps) {
-  const router = useRouter();
+  const queryClient = useQueryClient();
   const [internalOpen, setInternalOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
@@ -70,7 +70,7 @@ export function TxsFormDialog({
         }
         onOpenChange(false);
         form.reset();
-        router.invalidate();
+        queryClient.invalidateQueries({ queryKey: ["transactions"] });
       } finally {
         setIsPending(false);
       }
