@@ -27,8 +27,6 @@ const request = async <T>(
     headers: { ...getAuthHeaders(), ...options?.headers },
   });
 
-  console.log("API response:", res);
-
   if (!res.ok) {
     throw new Error(`API error: ${res.status}`);
   }
