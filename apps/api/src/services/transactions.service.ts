@@ -8,7 +8,7 @@ import type {
 } from "@finance/shared";
 
 import db from "@/db";
-import { transactions } from "@/db/schema";
+import { categories, transactions } from "@/db/schema";
 
 const ORDER_BY: Record<TransactionSort, ReturnType<typeof desc>> = {
   latest: desc(transactions.date),
@@ -27,7 +27,7 @@ const buildConditions = (userId: string, options: TransactionQuery) => {
   }
 
   if (options.category) {
-    conditions.push(eq(transactions.categoryId, options.category));
+    conditions.push(ilike(categories.name, options.category));
   }
 
   return conditions;
@@ -40,22 +40,22 @@ export const getAll = async (userId: string, options: TransactionQuery) => {
   const [{ total }] = await db
     .select({ total: count() })
     .from(transactions)
+    .innerJoin(categories, eq(transactions.categoryId, categories.id))
     .where(and(...conditions));
 
-  const data = await db.query.transactions.findMany({
-    where: and(...conditions),
-    with: {
-      category: {
-        columns: {
-          id: true,
-          name: true,
-        },
-      },
-    },
-    limit: options.limit,
-    offset,
-    orderBy: ORDER_BY[options.sort],
-  });
+  const rows = await db
+    .select()
+    .from(transactions)
+    .innerJoin(categories, eq(transactions.categoryId, categories.id))
+    .where(and(...conditions))
+    .orderBy(ORDER_BY[options.sort])
+    .limit(options.limit)
+    .offset(offset);
+
+  const data = rows.map((row) => ({
+    ...row.transactions,
+    category: { id: row.categories.id, name: row.categories.name },
+  }));
 
   return {
     transactions: data,
