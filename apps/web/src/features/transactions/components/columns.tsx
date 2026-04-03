@@ -1,18 +1,8 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import {
-  DotsThreeIcon,
-  PencilSimpleIcon,
-  TrashIcon,
-} from "@phosphor-icons/react";
 import { type TransactionWithCategory } from "@finance/shared";
 
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ActionsDropdown } from "@/components/shared/ActionsDropdown";
 
 interface ColumnOptions {
   onEdit: (transaction: TransactionWithCategory) => void;
@@ -93,30 +83,10 @@ export function getColumns({
       cell: ({ row }) => {
         const tx = row.original;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                // variant="tertiary"
-                className="p-0 cursor-pointer"
-                aria-label="Open actions menu"
-              >
-                <DotsThreeIcon className="size-5" weight="bold" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(tx)}>
-                <PencilSimpleIcon className="size-4" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={() => onDelete(tx)}
-              >
-                <TrashIcon className="size-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <ActionsDropdown
+            onEdit={() => onEdit(tx)}
+            onDelete={() => onDelete(tx)}
+          />
         );
       },
     },

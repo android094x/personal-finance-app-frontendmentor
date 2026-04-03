@@ -106,7 +106,7 @@ export function TxsFilters({ search, categories, onUpdate }: TxsFiltersProps) {
             <SelectContent>
               <SelectItem value="all">All Transactions</SelectItem>
               {categories.map((cat) => (
-                <SelectItem key={cat.id} value={cat.id}>
+                <SelectItem key={cat.id} value={cat.name.toLowerCase()}>
                   {cat.name}
                 </SelectItem>
               ))}
@@ -158,7 +158,10 @@ export function TxsFilters({ search, categories, onUpdate }: TxsFiltersProps) {
                 All Transactions
               </DropdownMenuRadioItem>
               {categories.map((cat) => (
-                <DropdownMenuRadioItem key={cat.id} value={cat.id}>
+                <DropdownMenuRadioItem
+                  key={cat.id}
+                  value={cat.name.toLowerCase()}
+                >
                   {cat.name}
                 </DropdownMenuRadioItem>
               ))}
