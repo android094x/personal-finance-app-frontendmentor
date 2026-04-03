@@ -10,6 +10,7 @@ import categoriesRoutes from "@/routes/categories.route";
 import potsRoutes from "@/routes/pots.route";
 import txsRoutes from "@/routes/transactions.route";
 import overviewRoutes from "@/routes/overview.route";
+import recurringBillsRoutes from "@/routes/recurringBills.route";
 import { errorHandler, notFound } from "@/middleware/errorHandler";
 
 // Create Express application
@@ -40,6 +41,7 @@ app.use("/api/budgets", budgetsRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/pots", potsRoutes);
 app.use("/api/transactions", txsRoutes);
+app.use("/api/recurring-bills", recurringBillsRoutes);
 
 app.use(notFound);
 

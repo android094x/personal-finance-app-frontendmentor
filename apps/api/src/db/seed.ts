@@ -103,16 +103,11 @@ async function seed() {
   }
 }
 
-console.log("import.meta.url", import.meta.url);
-console.log(`file://${process.argv[1]}`);
-
-// if (import.meta.url === `file://${process.argv[1]}`) {
 seed()
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
     process.exit(1);
   });
-// }
 
 export default seed;
