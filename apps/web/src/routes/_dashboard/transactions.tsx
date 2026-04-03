@@ -76,6 +76,8 @@ function TransactionsPage() {
     try {
       await api.delete(`/transactions/${deleteTarget.id}`);
       setDeleteTarget(null);
+      queryClient.invalidateQueries({ queryKey: ["overview"] });
+      queryClient.invalidateQueries({ queryKey: ["budgets"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
     } finally {
       setIsDeleting(false);
