@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, lt, sql } from "drizzle-orm";
+import { and, desc, eq, gte, lt, lte, sql } from "drizzle-orm";
 
 import type { CreateBudget, UpdateBudget } from "@finance/shared";
 
@@ -40,12 +40,13 @@ export const getAll = async (userId: string) => {
         eq(transactions.userId, budgets.userId),
         gte(transactions.date, start),
         lt(transactions.date, end),
+        lt(transactions.amount, "0"),
       ),
     )
     .where(eq(budgets.userId, userId))
     .groupBy(budgets.id, categories.id, categories.name);
 
-  // 2. Last 3 transactions per budget category this month
+  // 2. Last 3 expense transactions per budget category this month
   const categoryIds = budgetRows.map((b) => b.categoryId);
 
   const recentTransactions = categoryIds.length
@@ -65,6 +66,7 @@ export const getAll = async (userId: string) => {
             sql`${transactions.categoryId} IN ${categoryIds}`,
             gte(transactions.date, start),
             lt(transactions.date, end),
+            lt(transactions.amount, "0"),
           ),
         )
         .orderBy(desc(transactions.date))
@@ -112,6 +114,7 @@ export const getById = async (userId: string, id: string) => {
         eq(transactions.userId, budgets.userId),
         gte(transactions.date, start),
         lt(transactions.date, end),
+        lt(transactions.amount, "0"),
       ),
     )
     .where(and(eq(budgets.id, id), eq(budgets.userId, userId)))

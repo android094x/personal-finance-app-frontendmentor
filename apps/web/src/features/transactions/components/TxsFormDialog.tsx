@@ -70,6 +70,8 @@ export function TxsFormDialog({
         }
         onOpenChange(false);
         form.reset();
+        queryClient.invalidateQueries({ queryKey: ["overview"] });
+        queryClient.invalidateQueries({ queryKey: ["budgets"] });
         queryClient.invalidateQueries({ queryKey: ["transactions"] });
       } finally {
         setIsPending(false);
