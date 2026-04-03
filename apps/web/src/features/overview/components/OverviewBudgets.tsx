@@ -89,7 +89,7 @@ const OverviewBudgets = ({ budgets }: OverviewBudgetsProps) => {
             "@max-sm:grid-cols-2 @max-sm:w-full",
           )}
         >
-          {budgets.map((budget) => (
+          {budgets.slice(0, 4).map((budget) => (
             <div key={budget.id} className="flex gap-4">
               <span
                 className="block h-full w-1 rounded-lg"

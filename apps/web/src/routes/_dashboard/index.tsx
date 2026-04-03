@@ -40,6 +40,12 @@ function OverviewPage() {
     theme: p.theme,
   }));
 
+  const recurringBills = {
+    paid: Number(data.recurringBills.paid),
+    upcoming: Number(data.recurringBills.upcoming),
+    dueSoon: Number(data.recurringBills.dueSoon),
+  };
+
   const transactions = data.transactions.map((t) => ({
     id: t.id,
     avatar: t.avatar,
@@ -61,7 +67,7 @@ function OverviewPage() {
         </div>
         <div className="space-y-6">
           <OverviewBudgets budgets={budgets} />
-          <OverviewRecurringBills />
+          <OverviewRecurringBills bills={recurringBills} />
         </div>
       </div>
     </div>
