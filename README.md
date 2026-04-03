@@ -8,24 +8,23 @@
 
 ## Status
 
-**Work in Progress** — Core functionality is implemented. Remaining features and polish are actively being developed.
+**Work in Progress** — Core features are implemented. Remaining polish and testing are actively being developed.
 
 ### What's done
 
 - [x] User authentication (register/login with JWT)
-- [x] Overview dashboard with aggregated financial data
-- [x] Transactions with pagination, search, sort, and filter
-- [x] Transaction CRUD
-- [x] Budget CRUD
-- [x] Savings pots with deposit/withdraw
+- [x] Overview dashboard with aggregated financial data (balances, transactions, budgets, pots, recurring bills summary)
+- [x] Transactions with pagination, search, sort, and category filter
+- [x] Transaction CRUD (create, edit, delete with confirmation dialog)
+- [x] Budget CRUD with spending visualization (donut chart, latest spending, theme colors)
+- [x] Savings pots with deposit/withdraw (progress bar, amount preview)
+- [x] Recurring bills page with search and sort filters
 - [x] Category management
 - [x] Responsive layout (mobile, tablet, desktop)
+- [x] Shared Zod schemas for end-to-end type safety
 
 ### What's next
 
-- [ ] Recurring bills page
-- [ ] Budget detail views with spending visualization
-- [ ] Pot progress UI
 - [ ] Loading and error states
 - [ ] Keyboard navigation improvements
 - [ ] API integration tests
@@ -37,10 +36,12 @@
 
 - **React 19** with TypeScript
 - **TanStack Router** — file-based routing with type-safe loaders and search params
+- **TanStack React Query** — server state management with suspense-based data fetching
 - **TanStack Form** — form management with Zod validation
 - **Tailwind CSS v4** — utility-first styling with custom design tokens
-- **Radix UI** — accessible headless component primitives
+- **Radix UI** — accessible headless component primitives (Dialog, Select, DropdownMenu)
 - **Recharts** — data visualization
+- **Phosphor Icons** — icon library
 
 ### Backend
 
@@ -71,7 +72,12 @@ personal-finance-app/
 │   └── web/          # React SPA
 │       └── src/
 │           ├── routes/         # TanStack Router pages
-│           ├── features/       # Feature-specific components
+│           ├── features/       # Feature modules
+│           │   ├── budgets/        # Budget cards, form, queries
+│           │   ├── overview/       # Dashboard summary cards
+│           │   ├── pots/           # Pot cards, forms, transactions
+│           │   ├── recurring-bills/ # Bills table, summary, filters
+│           │   └── transactions/   # Data table, form, filters
 │           ├── components/     # Shared UI components
 │           ├── lib/            # API client, auth, utilities
 │           └── styles/         # Global styles and tokens
